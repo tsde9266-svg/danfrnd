@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shorts | Clipwave</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+        }
+
+        .user-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .shorts-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .shorts-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .shorts-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .shorts-content {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .shorts-thumbnail {
+            flex-shrink: 0;
+            width: 200px;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f0f0f0;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .shorts-thumbnail::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .shorts-thumbnail:hover::after {
+            opacity: 1;
+        }
+
+        .shorts-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .shorts-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .shorts-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .shorts-meta {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .shorts-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .shorts-stats {
+            font-size: 0.85rem;
+            color: #777;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .shorts-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+        }
+
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .like-btn:hover {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .like-btn.liked {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .empty-state {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 4rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            nav {
+                gap: 1rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .shorts-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .shorts-thumbnail {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .shorts-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">Clipwave</div>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#shorts">Shorts</a>
+            <a href="#profile">Profile</a>
+            <a href="#dashboard">Dashboard</a>
+            <span class="user-badge">JohnDoe</span>
+            <a href="#logout" class="btn btn-primary">Logout</a>
+        </nav>
+    </header>
+
+    <main class="content">
+        <h1 class="page-title">Your Feed</h1>
+        
+        <div class="shorts-feed">
+            <div class="shorts-card">
+                <div class="shorts-content">
+                    <a href="#watch" class="shorts-thumbnail">
+                        <video class="shorts-video" muted playsinline>
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                        </video>
+                    </a>
+                    <div class="shorts-details">
+                        <h3 class="shorts-title">Epic Adventure Begins</h3>
+                        <div class="shorts-meta">
+                            <span>🎬 By CreatorName</span>
+                            <span>🎭 Comedy</span>
+                            <span>📊 Rated: PG</span>
+                        </div>
+                        <div class="shorts-stats">
+                            <span>❤️ 1.2K Likes</span>
+                            <span>💬 89 Comments</span>
+                        </div>
+                        <div class="shorts-actions">
+                            <button class="btn btn-secondary like-btn" data-liked="false">
+                                ❤️ Like <span class="like-count">1.2K</span>
+                            </button>
+                            <a href="#watch" class="btn btn-secondary">💬 Comment</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shorts-card">
+                <div class="shorts-content">
+                    <a href="#watch" class="shorts-thumbnail">
+                        <video class="shorts-video" muted playsinline>
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+                        </video>
+                    </a>
+                    <div class="shorts-details">
+                        <h3 class="shorts-title">Creative Masterpiece</h3>
+                        <div class="shorts-meta">
+                            <span>🎬 By ArtistName</span>
+                            <span>🎭 Fantasy</span>
+                            <span>📊 Rated: G</span>
+                        </div>
+                        <div class="shorts-stats">
+                            <span>❤️ 856 Likes</span>
+                            <span>💬 43 Comments</span>
+                        </div>
+                        <div class="shorts-actions">
+                            <button class="btn btn-secondary like-btn" data-liked="false">
+                                ❤️ Like <span class="like-count">856</span>
+                            </button>
+                            <a href="#watch" class="btn btn-secondary">💬 Comment</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shorts-card">
+                <div class="shorts-content">
+                    <a href="#watch" class="shorts-thumbnail">
+                        <video class="shorts-video" muted playsinline>
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                        </video>
+                    </a>
+                    <div class="shorts-details">
+                        <h3 class="shorts-title">Thrilling Experience</h3>
+                        <div class="shorts-meta">
+                            <span>🎬 By FilmMaker</span>
+                            <span>🎭 Action</span>
+                            <span>📊 Rated: 12</span>
+                        </div>
+                        <div class="shorts-stats">
+                            <span>❤️ 2.1K Likes</span>
+                            <span>💬 156 Comments</span>
+                        </div>
+                        <div class="shorts-actions">
+                            <button class="btn btn-secondary like-btn liked" data-liked="true">
+                                ❤️ Liked <span class="like-count">2.1K</span>
+                            </button>
+                            <a href="#watch" class="btn btn-secondary">💬 Comment</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const liked = btn.dataset.liked === 'true';
+                const likeCount = btn.querySelector('.like-count');
+                let count = parseInt(likeCount.textContent.replace('K', '000').replace('.', ''));
+                
+                if (liked) {
+                    btn.classList.remove('liked');
+                    btn.innerHTML = '❤️ Like <span class="like-count">' + formatCount(count - 1) + '</span>';
+                    btn.dataset.liked = 'false';
+                } else {
+                    btn.classList.add('liked');
+                    btn.innerHTML = '❤️ Liked <span class="like-count">' + formatCount(count + 1) + '</span>';
+                    btn.dataset.liked = 'true';
+                }
+            });
+        });
+
+        function formatCount(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // Auto-play videos on hover
+        document.querySelectorAll('.shorts-video').forEach(video => {
+            video.parentElement.addEventListener('mouseenter', () => {
+                video.play();
+            });
+            video.parentElement.addEventListener('mouseleave', () => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+    </script>
+</body>
+</html>

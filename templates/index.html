@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+{% block title %}Clipwave - Stream Your Moments{% endblock %}
+{% block content %}
+{% if 'user' not in session %}
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Stream Your <span class="gradient-text">Moments</span></h1>
+                <p>Create, share, and discover bite-sized videos that matter. Join creators worldwide on Clipwave.</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('register') }}" class="btn-hero-primary">
+                        <i class="fas fa-rocket"></i> Start Creating
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn-hero-ghost">
+                        <i class="fas fa-play"></i> Explore Now
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">
+                    <i class="fas fa-video"></i>
+                    <span>Create</span>
+                </div>
+                <div class="floating-card card-2">
+                    <i class="fas fa-share"></i>
+                    <span>Share</span>
+                </div>
+                <div class="floating-card card-3">
+                    <i class="fas fa-heart"></i>
+                    <span>Connect</span>
+                </div>
+            </div>
+        </div>
+    </section>
+{% else %}
+    <section class="welcome">
+        <div class="welcome-content">
+            <h2>Welcome back, <span class="highlight">{{ session['user']['username'] }}</span>!</h2>
+            <p>Ready to dive into the latest clips?</p>
+        </div>
+    </section>
+{% endif %}
+
+<section class="featured">
+    <div class="section-header">
+        <h2><i class="fas fa-fire"></i> Trending Clips</h2>
+        <a href="{{ url_for('shorts') }}" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="clips-grid">
+        {% for video in videos %}
+            <div class="clip-card" onclick="window.location='{{ url_for('watch', video_id=video['id']) }}'">
+                <div class="clip-thumbnail">
+                    <video muted playsinline preload="metadata">
+                        <source src="{{ video['url'] }}" type="video/mp4">
+                    </video>
+                    <div class="play-overlay">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="clip-info">
+                    <h3>{{ video['title'] }}</h3>
+                    <p class="creator">{{ video['publisher'] }}</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-video-slash"></i>
+                <h3>No clips yet</h3>
+                <p>Be the first to share something amazing!</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .hero {
+        padding: 4rem 0;
+        text-align: center;
+    }
+
+    .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 4rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .hero-text h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        color: white;
+        line-height: 1.2;
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-text p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-hero-primary, .btn-hero-ghost {
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+
+    .btn-hero-primary {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+    }
+
+    .btn-hero-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+    }
+
+    .btn-hero-ghost {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-hero-ghost:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-visual {
+        position: relative;
+        height: 300px;
+    }
+
+    .floating-card {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .floating-card i {
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+
+    .card-1 {
+        top: 20px;
+        left: 20px;
+        animation-delay: 0s;
+    }
+
+    .card-2 {
+        top: 50%;
+        right: 20px;
+        animation-delay: 1s;
+    }
+
+    .card-3 {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        animation-delay: 2s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .welcome {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .welcome h2 {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .highlight {
+        color: #f093fb;
+    }
+
+    .welcome p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+    }
+
+    .featured {
+        margin-top: 3rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+        color: white;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-header i {
+        color: #f5576c;
+    }
+
+    .view-all {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .view-all:hover {
+        color: white;
+    }
+
+    .clips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .clip-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .clip-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+    }
+
+    .clip-thumbnail {
+        position: relative;
+        aspect-ratio: 16/9;
+        overflow: hidden;
+    }
+
+    .clip-thumbnail video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .play-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        transition: all 0.2s;
+    }
+
+    .clip-card:hover .play-overlay {
+        background: rgba(102, 126, 234, 0.9);
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .clip-info {
+        padding: 1.5rem;
+    }
+
+    .clip-info h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+        line-height: 1.3;
+    }
+
+    .creator {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 2rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .hero-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 2.5rem;
+        }
+        
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .hero-visual {
+            height: 200px;
+        }
+        
+        .clips-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+{% block title %}Creator Dashboard - Clipwave{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="page-title">
+            <i class="fas fa-video"></i>
+            Creator Dashboard
+        </h1>
+        <p class="page-subtitle">Share your creativity with the world</p>
+    </div>
+
+    <!-- Upload Form Section -->
+    <section class="upload-section">
+        <div class="section-card">
+            <div class="section-header">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Upload New Video</h2>
+                <p>Share your latest creation with the Clipwave community</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('upload_video') }}" enctype="multipart/form-data" class="upload-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-heading"></i> Title</label>
+                        <input type="text" name="title" placeholder="Give your video an amazing title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-user-tie"></i> Publisher</label>
+                        <input type="text" name="publisher" placeholder="Publisher name" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-film"></i> Producer</label>
+                        <input type="text" name="producer" placeholder="Producer name (optional)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-tags"></i> Genre</label>
+                        <input type="text" name="genre" placeholder="e.g., Comedy, Drama, Action">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-shield-alt"></i> Age Rating</label>
+                        <select name="age_rating" required class="rating-select">
+                            <option value="">-- Select Age Rating --</option>
+                            <option value="G">🟢 G - General Audiences</option>
+                            <option value="PG">🔵 PG - Parental Guidance</option>
+                            <option value="12">🟡 12 - Ages 12 and Up</option>
+                            <option value="15">🟠 15 - Ages 15 and Up</option>
+                            <option value="18">🔴 18 - Adults Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group file-group">
+                        <label><i class="fas fa-file-video"></i> Video File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" name="file" accept="video/*" id="video-file" required>
+                            <label for="video-file" class="file-input-label">
+                                <i class="fas fa-plus"></i>
+                                <span>Choose Video File</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-upload">
+                    <i class="fas fa-rocket"></i> Upload Video
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Uploaded Videos Section -->
+    <section class="videos-section">
+        <div class="section-card">
+            <div class="section-header">
+                <h2><i class="fas fa-play-circle"></i> Your Uploaded Videos</h2>
+                <p>Manage your content library</p>
+            </div>
+            
+            {% if videos %}
+                <div class="video-grid">
+                    {% for video in videos %}
+                        <div class="video-card">
+                            <div class="video-thumbnail">
+                                <video preload="metadata" muted>
+                                    <source src="{{ video['url'] }}" type="video/mp4">
+                                </video>
+                                <div class="play-overlay">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                            </div>
+                            <div class="video-info">
+                                <h3 class="video-title">{{ video['title'] }}</h3>
+                                <div class="video-meta">
+                                    <span class="genre">
+                                        <i class="fas fa-tag"></i>
+                                        {{ video['genre'] or 'No Genre' }}
+                                    </span>
+                                    <span class="rating">
+                                        <i class="fas fa-shield-alt"></i>
+                                        {{ video['age_rating'] or 'Not Rated' }}
+                                    </span>
+                                </div>
+                                <div class="video-actions">
+                                    <button class="action-btn edit-btn">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="action-btn stats-btn">
+                                        <i class="fas fa-chart-line"></i> Stats
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>No videos uploaded yet</h3>
+                    <p>Upload your first video to start building your content library!</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+        font-weight: 300;
+    }
+
+    .section-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-header h2 i {
+        color: #667eea;
+    }
+
+    .section-header p {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .upload-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-group label i {
+        color: #667eea;
+        width: 16px;
+    }
+
+    .form-group input, .rating-select {
+        padding: 1rem 1.25rem;
+        border: 2px solid #e1e8ed;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background: white;
+        font-family: inherit;
+    }
+
+    .form-group input:focus, .rating-select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .file-group {
+        position: relative;
+    }
+
+    .file-input-wrapper {
+        position: relative;
+    }
+
+    #video-file {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .file-input-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        border: 2px dashed #e1e8ed;
+        border-radius: 12px;
+        background: #fafbfc;
+        transition: all 0.2s;
+        cursor: pointer;
+        font-weight: 500;
+        color: #555;
+    }
+
+    .file-input-label:hover, #video-file:focus + .file-input-label {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+        color: #667eea;
+    }
+
+    .btn-upload {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        align-self: flex-start;
+    }
+
+    .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .video-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .video-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .video-thumbnail {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .video-thumbnail video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .play-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        opacity: 0;
+        transition: all 0.3s;
+    }
+
+    .video-thumbnail:hover .play-overlay {
+        opacity: 1;
+    }
+
+    .video-info {
+        padding: 1.25rem;
+    }
+
+    .video-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .video-meta {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .video-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #666;
+    }
+
+    .video-meta i {
+        color: #667eea;
+    }
+
+    .video-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        border: 1px solid #e1e8ed;
+        background: white;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+
+    .action-btn:hover {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+        color: #667eea;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem;
+        }
+        
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .section-card {
+            padding: 1.5rem;
+        }
+        
+        .video-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    // File input enhancement
+    document.getElementById('video-file').addEventListener('change', function(e) {
+        const label = this.nextElementSibling;
+        const fileName = e.target.files[0]?.name;
+        if (fileName) {
+            label.innerHTML = `<i class="fas fa-check"></i><span>${fileName}</span>`;
+            label.style.borderColor = '#667eea';
+            label.style.background = 'rgba(102, 126, 234, 0.1)';
+            label.style.color = '#667eea';
+        }
+    });
+
+    // Video preview on hover
+    document.querySelectorAll('.video-thumbnail video').forEach(video => {
+        video.parentElement.addEventListener('mouseenter', () => {
+            video.play();
+        });
+        video.parentElement.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0;
+        });
+    });
+</script>
+{% endblock %}
